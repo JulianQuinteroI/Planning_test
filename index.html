@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOLO ▸ DOCTRINA OPERATIVA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#060810;             /* near-black + hint of midnight blue */
+    --bg-2:#0c1018;
+    --bg-3:#131820;
+    --line:#1f2530;           /* cool institutional line */
+    --line-2:#2a3340;
+    --text:#f0ede3;           /* warm institutional off-white */
+    --text-2:#9a9588;
+    --text-3:#5c5749;
+    --accent:#D4A24C;         /* HOLO institutional gold (sovereignty) */
+    --accent-2:#E8C56E;       /* gold light */
+    --cyan:#5BA3C4;           /* muted steel-teal (data / experto) */
+    --green:#7CB892;          /* status ok, muted */
+    --red:#C44D3D;            /* flag-red mature, alerts */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{
+    background:var(--bg);color:var(--text);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  ::selection{background:var(--accent);color:#000}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+
+  /* ── BACKGROUND GRID ─────────────────────────── */
+  .bg-grid{
+    position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:80px 80px;
+    mask-image:radial-gradient(ellipse at center,#000 30%,transparent 90%);
+  }
+  .scanline{
+    position:fixed;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    opacity:.6;z-index:2;pointer-events:none;
+    animation:scan 8s linear infinite;
+  }
+  .noise{
+    position:fixed;inset:0;pointer-events:none;z-index:3;opacity:.03;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* ── FIDUCIALS (corner crosshairs) ──────────── */
+  .fiducial{position:fixed;width:24px;height:24px;z-index:5;color:var(--accent);opacity:.8;pointer-events:none}
+  .fiducial::before,.fiducial::after{content:"";position:absolute;background:currentColor}
+  .fiducial::before{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
+  .fiducial::after{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
+  .fid-tl{top:16px;left:16px}.fid-tr{top:16px;right:16px}
+  .fid-bl{bottom:16px;left:16px}.fid-br{bottom:16px;right:16px}
+
+  /* ── CLASSIFICATION BAR ──────────────────────── */
+  .class-bar{
+    position:fixed;top:0;left:0;right:0;z-index:10;
+    background:#000;border-bottom:1px solid var(--line);
+    padding:6px 24px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);
+  }
+  .class-bar .left{display:flex;gap:18px;align-items:center}
+  .class-bar .right{display:flex;gap:18px;align-items:center}
+  .class-bar .pill{
+    padding:2px 8px;background:var(--accent);color:#000;font-weight:700;letter-spacing:2px;
+  }
+  .class-bar .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.4s ease-in-out infinite}
+
+  /* ── LAYOUT ──────────────────────────────────── */
+  .wrap{position:relative;z-index:4;max-width:1280px;margin:0 auto;padding:80px 48px 48px}
+
+  /* ── HERO ────────────────────────────────────── */
+  .hero{padding:48px 0 64px;border-bottom:1px solid var(--line)}
+  .hero .meta-line{
+    display:flex;gap:24px;font-family:'IBM Plex Mono',monospace;font-size:11px;
+    letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:32px;
+  }
+  .hero .meta-line span{display:flex;align-items:center;gap:8px}
+  .hero .meta-line b{color:var(--accent);font-weight:500}
+  .hero .holo-mark{
+    font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:13px;
+    color:var(--accent);letter-spacing:6px;margin-bottom:16px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .hero .holo-mark::before{content:"▸";font-size:10px}
+  .hero .holo-mark::after{content:"";flex:0 0 60px;height:1px;background:var(--accent)}
+  .hero h1{
+    font-family:'IBM Plex Sans',sans-serif;
+    font-size:clamp(38px,6vw,82px);font-weight:300;letter-spacing:-2px;line-height:1;
+    color:var(--text);margin-bottom:24px;
+  }
+  .hero h1 .em{font-weight:600;color:var(--accent)}
+  .hero h1 .cursor{display:inline-block;width:14px;height:.85em;background:var(--accent);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  .hero .lede{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text-2);
+    max-width:720px;line-height:1.7;letter-spacing:.5px;
+  }
+  .hero .lede b{color:var(--text);font-weight:500}
+  .hero .quote{
+    margin-top:40px;padding:20px 0 20px 24px;border-left:2px solid var(--accent);
+    font-family:'IBM Plex Sans',sans-serif;font-style:italic;
+    font-size:18px;color:var(--text);line-height:1.4;max-width:680px;
+  }
+  .hero .quote::before{content:"«";font-size:32px;color:var(--accent);margin-right:6px;vertical-align:-4px}
+  .hero .quote::after{content:"»";font-size:32px;color:var(--accent);margin-left:4px;vertical-align:-4px}
+  .hero .quote .src{display:block;margin-top:12px;font-style:normal;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:2px;text-transform:uppercase}
+
+  /* ── PHASE STRIP ─────────────────────────────── */
+  .phase{
+    display:grid;grid-template-columns:60px 220px 1fr;gap:40px;
+    padding:48px 0;border-bottom:1px solid var(--line);
+    align-items:start;
+    opacity:0;transform:translateY(24px);
+    animation:phaseIn .9s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .phase:nth-of-type(1){animation-delay:.15s}
+  .phase:nth-of-type(2){animation-delay:.3s}
+  .phase:nth-of-type(3){animation-delay:.45s}
+  .phase:nth-of-type(4){animation-delay:.6s}
+  .phase:nth-of-type(5){animation-delay:.75s}
+  .phase:hover .illust path,.phase:hover .illust circle,.phase:hover .illust line,.phase:hover .illust polyline,.phase:hover .illust rect{stroke:var(--accent)}
+  .phase:hover .num{color:var(--accent)}
+
+  .phase .num{
+    font-family:'IBM Plex Mono',monospace;font-size:64px;font-weight:300;
+    color:var(--text-3);line-height:.9;letter-spacing:-3px;
+    transition:color .35s ease;
+  }
+  .phase .num small{display:block;font-size:9px;letter-spacing:3px;color:var(--text-3);margin-top:8px;font-weight:500}
+
+  .phase .illust{
+    width:200px;height:200px;border:1px solid var(--line-2);
+    background:var(--bg-2);position:relative;overflow:hidden;
+  }
+  .phase .illust::before{
+    content:"";position:absolute;top:0;left:0;width:12px;height:12px;
+    border-top:1px solid var(--accent);border-left:1px solid var(--accent);
+  }
+  .phase .illust::after{
+    content:"";position:absolute;bottom:0;right:0;width:12px;height:12px;
+    border-bottom:1px solid var(--accent);border-right:1px solid var(--accent);
+  }
+  .phase .illust svg{width:100%;height:100%;display:block}
+  .phase .illust .tag{
+    position:absolute;bottom:6px;left:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--text-3);
+    letter-spacing:1.5px;text-transform:uppercase;
+  }
+
+  .phase .body{padding-top:4px}
+  .phase .doctr{
+    display:flex;align-items:center;gap:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;
+    text-transform:uppercase;color:var(--accent);margin-bottom:18px;
+  }
+  .phase .doctr::before{content:"";width:18px;height:1px;background:var(--accent)}
+  .phase .doctr .ref{margin-left:auto;color:var(--text-3)}
+
+  .phase h2{
+    font-family:'IBM Plex Sans',sans-serif;font-size:28px;font-weight:300;
+    color:var(--text);line-height:1.2;letter-spacing:-.5px;margin-bottom:14px;
+    font-style:italic;
+  }
+  .phase h2::before{content:"« ";color:var(--accent);font-style:normal;font-weight:600}
+  .phase h2::after{content:" »";color:var(--accent);font-style:normal;font-weight:600}
+
+  .phase .doctrine-line{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-2);
+    line-height:1.6;margin-bottom:24px;letter-spacing:.3px;
+  }
+  .phase .doctrine-line b{color:var(--text);font-weight:500}
+
+  .phase .duo{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border:1px solid var(--line-2);background:var(--bg-2);
+  }
+  .phase .duo > div{padding:16px 18px;position:relative}
+  .phase .duo > div + div{border-left:1px solid var(--line-2)}
+  .phase .duo .role{
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:2.5px;
+    text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;
+  }
+  .phase .duo .ai .role{color:var(--accent)}
+  .phase .duo .ex .role{color:var(--cyan)}
+  .phase .duo .role::before{content:"▸"}
+  .phase .duo p{font-size:12.5px;color:var(--text);line-height:1.5}
+  .phase .duo .ex{background:rgba(78,201,255,.025)}
+
+  /* ── DECISION BLOCK ──────────────────────────── */
+  .decision{
+    margin-top:64px;padding:64px 48px;
+    background:linear-gradient(180deg,#0d0d0d,#070707);
+    border:1px solid var(--accent);position:relative;
+    text-align:center;
+    opacity:0;transform:translateY(20px);
+    animation:phaseIn .9s ease forwards;animation-delay:.95s;
+  }
+  .decision::before,.decision::after{
+    content:"";position:absolute;width:20px;height:20px;border:1px solid var(--accent);
+  }
+  .decision::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+  .decision::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+  .decision .label{
+    display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;
+    letter-spacing:4px;text-transform:uppercase;color:var(--accent);
+    padding:6px 14px;border:1px solid var(--accent);margin-bottom:24px;
+  }
+  .decision h3{
+    font-family:'IBM Plex Sans',sans-serif;font-weight:300;font-size:clamp(28px,4vw,46px);
+    color:var(--text);line-height:1.15;letter-spacing:-1px;max-width:920px;margin:0 auto;
+  }
+  .decision h3 b{color:var(--accent);font-weight:600}
+  .decision .auth{
+    margin-top:32px;display:inline-flex;gap:32px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-2);
+    letter-spacing:2px;text-transform:uppercase;
+  }
+  .decision .auth span{display:flex;align-items:center;gap:8px}
+  .decision .auth .arrow{color:var(--accent)}
+
+  /* ── FOOTER ──────────────────────────────────── */
+  .foot{
+    margin-top:48px;padding:24px 0;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-3);
+    letter-spacing:2px;text-transform:uppercase;
+  }
+  .foot b{color:var(--accent)}
+  .foot .ticker{
+    flex:1;overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);
+    margin:0 24px;
+  }
+  .foot .ticker-track{
+    display:inline-flex;gap:32px;white-space:nowrap;
+    animation:ticker 40s linear infinite;
+  }
+
+  /* ── TACTICAL OPS MAP ────────────────────────── */
+  .opmap-section{
+    margin:48px 0 0;border:1px solid var(--line-2);background:var(--bg-2);
+    position:relative;overflow:hidden;
+    opacity:0;animation:phaseIn .9s ease forwards;animation-delay:.3s;
+  }
+  .opmap-section::before,.opmap-section::after{
+    content:"";position:absolute;width:14px;height:14px;border:1px solid var(--accent);
+  }
+  .opmap-section::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+  .opmap-section::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+  .opmap-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 24px;border-bottom:1px solid var(--line-2);
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2.5px;
+    text-transform:uppercase;color:var(--text-3);
+  }
+  .opmap-header .title{color:var(--accent);letter-spacing:3px}
+  .opmap-header .meta{display:flex;gap:18px}
+  .opmap-header .meta span b{color:var(--text-2);font-weight:500}
+  .opmap-svg{display:block;width:100%;height:auto}
+
+  /* ── SYMBOLOGY LEGEND STRIP ─────────────────── */
+  .symb-strip{
+    display:flex;justify-content:space-around;flex-wrap:wrap;gap:18px;
+    padding:18px 24px;border-top:1px solid var(--line-2);
+    background:var(--bg);
+  }
+  .symb-item{
+    display:flex;align-items:center;gap:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;
+    letter-spacing:2px;text-transform:uppercase;color:var(--text-2);
+  }
+  .symb-item b{color:var(--text);font-weight:500}
+  .mil-svg{width:34px;height:22px;flex:0 0 34px;color:var(--cyan)}
+  .mil-svg.eny{color:var(--red)}
+  .mil-svg.cmd{color:var(--accent)}
+
+  /* ── PHASE INLINE MIL SYMBOL ─────────────────── */
+  .doctr .phase-mil{
+    width:30px;height:20px;flex:0 0 30px;color:var(--accent);margin-right:4px;
+  }
+
+  /* ── AMBIENT SILHOUETTES ─────────────────────── */
+  .ambient-silhouette{
+    position:absolute;pointer-events:none;opacity:.06;color:var(--text);
+    z-index:0;
+  }
+  .amb-a29{bottom:-30px;right:-20px;width:280px}
+  .amb-uh60{top:20px;left:-40px;width:220px;opacity:.04}
+  .amb-soldier{bottom:0;left:30px;width:90px;opacity:.08}
+  .amb-mountain{position:absolute;bottom:0;left:0;right:0;width:100%;height:80px;opacity:.07;z-index:0;color:var(--accent)}
+
+  /* ── SVG ANIMATIONS ──────────────────────────── */
+  .draw-line{
+    stroke-dasharray:300;stroke-dashoffset:300;
+    animation:draw 2.4s ease forwards;
+  }
+  .draw-1{animation-delay:.5s}
+  .draw-2{animation-delay:.9s}
+  .draw-3{animation-delay:1.3s}
+  .pulse-dot{animation:pulseDot 2s ease-in-out infinite}
+  .spin-slow{transform-origin:center;animation:spin 18s linear infinite}
+  .spin-rev{transform-origin:center;animation:spin 28s linear infinite reverse}
+  .blink-soft{animation:blinkSoft 2.4s ease-in-out infinite}
+
+  /* ── KEYFRAMES ───────────────────────────────── */
+  @keyframes phaseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  @keyframes blinkSoft{0%,100%{opacity:.4}50%{opacity:1}}
+  @keyframes pulseDot{0%,100%{r:3;opacity:1}50%{r:5;opacity:.5}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  @keyframes scan{0%{top:-2px}100%{top:100vh}}
+  @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes typeIn{from{width:0}to{width:100%}}
+
+  .typed{
+    display:inline-block;overflow:hidden;white-space:nowrap;border-right:2px solid var(--accent);
+    animation:typeIn 1.6s steps(28) forwards, blink 1s steps(1) infinite 1.6s;
+    width:0;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────── */
+  @media (max-width:880px){
+    .phase{grid-template-columns:1fr;gap:18px}
+    .phase .num{font-size:48px}
+    .phase .illust{width:160px;height:160px}
+    .phase .duo{grid-template-columns:1fr}
+    .phase .duo > div + div{border-left:none;border-top:1px solid var(--line-2)}
+    .wrap{padding:72px 24px 32px}
+    .decision{padding:40px 24px}
+    .foot .ticker{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="noise"></div>
+<div class="scanline"></div>
+
+<div class="fiducial fid-tl"></div>
+<div class="fiducial fid-tr"></div>
+<div class="fiducial fid-bl"></div>
+<div class="fiducial fid-br"></div>
+
+<!-- CLASSIFICATION BAR -->
+<div class="class-bar">
+  <div class="left">
+    <span><span class="dot"></span> SYSTEM ▸ ONLINE</span>
+    <span>HOLO ▸ DOCTRINE LAYER v1.0</span>
+  </div>
+  <div class="right">
+    <span class="pill">PUBLIC</span>
+    <span id="ts">2026-05-06 ▸ 00:00:00 UTC-5</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ───── HERO ───── -->
+  <section class="hero">
+    <div class="meta-line">
+      <span>▸ DOCTRINE <b>MFRE 1-02.1</b></span>
+      <span>▸ AUTH <b>CEDOC // CGFM</b></span>
+      <span>▸ STATUS <b>OPERATIONAL</b></span>
+    </div>
+
+    <div class="holo-mark">HOLO ▸ PLANEAMIENTO ASISTIDO</div>
+
+    <h1>
+      La máquina <span class="em">propone</span>.<br>
+      El experto <span class="em">interpreta</span>.<br>
+      El comandante <span class="em">decide</span><span class="cursor"></span>
+    </h1>
+
+    <p class="lede">
+      Cinco preguntas. Una doctrina. Una decisión humana al final del proceso.<br>
+      <b>HOLO</b> traduce el <b>PMTD</b> en una secuencia de juicios filosóficos asistidos por IA, donde cada respuesta tiene anclaje doctrinal y trazabilidad de mando.
+    </p>
+
+    <div class="quote">
+      No se trata de qué puede hacer la inteligencia artificial. Se trata de qué <b>debe</b> seguir haciendo el ser humano.
+      <span class="src">— Principio operativo HOLO ▸ Human-In-Command</span>
+    </div>
+  </section>
+
+  <!-- ═════════ TACTICAL OPERATIONS MAP ═════════ -->
+  <section class="opmap-section">
+    <div class="opmap-header">
+      <span class="title">▸ TACTICAL OPERATIONS GRAPHIC ▸ AO BOLÍVAR</span>
+      <div class="meta">
+        <span>GRID <b>04°15'N · 73°20'W</b></span>
+        <span>SCALE <b>1:50K</b></span>
+        <span>SHEET <b>04-A</b></span>
+      </div>
+    </div>
+
+    <svg class="opmap-svg" viewBox="0 0 1200 320" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="hex" x="0" y="0" width="40" height="35" patternUnits="userSpaceOnUse">
+          <polygon points="20,0 40,10 40,25 20,35 0,25 0,10" fill="none" stroke="#1f2530" stroke-width=".5"/>
+        </pattern>
+        <linearGradient id="terrainGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0c1018" stop-opacity="0"/>
+          <stop offset="1" stop-color="#0c1018" stop-opacity=".8"/>
+        </linearGradient>
+      </defs>
+      <rect width="1200" height="320" fill="url(#hex)" opacity=".6"/>
+
+      <!-- Topographic contours -->
+      <path d="M0,180 Q200,150 400,170 T800,150 T1200,140" fill="none" stroke="#5c5749" stroke-width=".7" opacity=".7" class="draw-line draw-1"/>
+      <path d="M0,210 Q200,175 400,195 T800,175 T1200,160" fill="none" stroke="#5c5749" stroke-width=".5" opacity=".55" class="draw-line draw-2"/>
+      <path d="M0,240 Q200,205 400,225 T800,210 T1200,195" fill="none" stroke="#5c5749" stroke-width=".4" opacity=".4" class="draw-line draw-3"/>
+      <path d="M0,150 Q200,120 400,140 T800,120 T1200,110" fill="none" stroke="#9a9588" stroke-width=".6" opacity=".4" class="draw-line draw-1"/>
+      <path d="M0,120 Q200,90 400,110 T800,90 T1200,80" fill="none" stroke="#9a9588" stroke-width=".5" opacity=".3" class="draw-line draw-2"/>
+
+      <!-- River / coast -->
+      <path d="M0,290 Q300,300 600,295 T1200,305" fill="none" stroke="#5BA3C4" stroke-width="1.2" opacity=".55"/>
+      <text x="20" y="285" fill="#5BA3C4" font-family="IBM Plex Mono" font-size="9" opacity=".7">RÍO META</text>
+
+      <!-- Phase lines -->
+      <line x1="240" y1="40" x2="240" y2="290" stroke="#D4A24C" stroke-width=".8" stroke-dasharray="6 4" opacity=".55"/>
+      <text x="246" y="52" fill="#D4A24C" font-family="IBM Plex Mono" font-size="9">PL ALPHA</text>
+      <line x1="720" y1="40" x2="720" y2="290" stroke="#D4A24C" stroke-width=".8" stroke-dasharray="6 4" opacity=".55"/>
+      <text x="726" y="52" fill="#D4A24C" font-family="IBM Plex Mono" font-size="9">PL BRAVO</text>
+
+      <!-- HQ JTF -->
+      <g transform="translate(80,180)">
+        <rect width="40" height="26" fill="#060810" stroke="#D4A24C" stroke-width="1.5"/>
+        <line x1="20" y1="-12" x2="20" y2="0" stroke="#D4A24C" stroke-width="1.5"/>
+        <text x="20" y="-16" text-anchor="middle" fill="#D4A24C" font-family="IBM Plex Mono" font-size="9" font-weight="700">HQ JTF-O</text>
+        <text x="20" y="42" text-anchor="middle" fill="#D4A24C" font-family="IBM Plex Mono" font-size="8">CMD</text>
+      </g>
+
+      <!-- Infantry A/2-31 -->
+      <g transform="translate(160,150)">
+        <rect width="40" height="26" fill="#060810" stroke="#5BA3C4" stroke-width="1.2"/>
+        <line x1="0" y1="0" x2="40" y2="26" stroke="#5BA3C4" stroke-width="1"/>
+        <line x1="40" y1="0" x2="0" y2="26" stroke="#5BA3C4" stroke-width="1"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#9a9588" font-family="IBM Plex Mono" font-size="8">A/2-31</text>
+        <text x="20" y="42" text-anchor="middle" fill="#5BA3C4" font-family="IBM Plex Mono" font-size="8">INF</text>
+      </g>
+
+      <!-- Cavalry / Armor -->
+      <g transform="translate(310,200)">
+        <rect width="40" height="26" fill="#060810" stroke="#5BA3C4" stroke-width="1.2"/>
+        <ellipse cx="20" cy="13" rx="14" ry="6" fill="none" stroke="#5BA3C4" stroke-width="1"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#9a9588" font-family="IBM Plex Mono" font-size="8">B/4-12</text>
+        <text x="20" y="42" text-anchor="middle" fill="#5BA3C4" font-family="IBM Plex Mono" font-size="8">CAB</text>
+      </g>
+
+      <!-- Recon (forward) -->
+      <g transform="translate(490,140)">
+        <rect width="40" height="26" fill="#060810" stroke="#5BA3C4" stroke-width="1.2"/>
+        <line x1="0" y1="26" x2="40" y2="0" stroke="#5BA3C4" stroke-width="1.2"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#9a9588" font-family="IBM Plex Mono" font-size="8">RECON-1</text>
+        <text x="20" y="42" text-anchor="middle" fill="#5BA3C4" font-family="IBM Plex Mono" font-size="8">REC</text>
+      </g>
+
+      <!-- Artillery (rear) -->
+      <g transform="translate(180,250)">
+        <rect width="40" height="26" fill="#060810" stroke="#5BA3C4" stroke-width="1.2"/>
+        <circle cx="20" cy="13" r="5" fill="#5BA3C4"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#9a9588" font-family="IBM Plex Mono" font-size="8">FA-1</text>
+        <text x="20" y="42" text-anchor="middle" fill="#5BA3C4" font-family="IBM Plex Mono" font-size="8">ART</text>
+      </g>
+
+      <!-- Aviation A-29 -->
+      <g transform="translate(420,90)">
+        <rect width="40" height="26" fill="#060810" stroke="#5BA3C4" stroke-width="1.2"/>
+        <path d="M6,13 L20,5 L34,13 L20,21 Z" fill="none" stroke="#5BA3C4" stroke-width="1"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#9a9588" font-family="IBM Plex Mono" font-size="8">A-29</text>
+        <text x="20" y="42" text-anchor="middle" fill="#5BA3C4" font-family="IBM Plex Mono" font-size="8">AVN</text>
+      </g>
+
+      <!-- Special Operations -->
+      <g transform="translate(590,180)">
+        <rect width="40" height="26" fill="#060810" stroke="#5BA3C4" stroke-width="1.2"/>
+        <line x1="13" y1="6" x2="27" y2="20" stroke="#5BA3C4" stroke-width="1.2"/>
+        <line x1="27" y1="6" x2="13" y2="20" stroke="#5BA3C4" stroke-width="1.2"/>
+        <line x1="20" y1="3" x2="20" y2="23" stroke="#5BA3C4" stroke-width="1.2"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#9a9588" font-family="IBM Plex Mono" font-size="8">SPF</text>
+        <text x="20" y="42" text-anchor="middle" fill="#5BA3C4" font-family="IBM Plex Mono" font-size="8">SOF</text>
+      </g>
+
+      <!-- Enemy 1 -->
+      <g transform="translate(840,150)">
+        <polygon points="20,0 40,13 20,26 0,13" fill="#060810" stroke="#C44D3D" stroke-width="1.2"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#C44D3D" font-family="IBM Plex Mono" font-size="8" class="blink-soft">ENY-1</text>
+      </g>
+      <!-- Enemy 2 -->
+      <g transform="translate(960,200)">
+        <polygon points="20,0 40,13 20,26 0,13" fill="#060810" stroke="#C44D3D" stroke-width="1.2"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#C44D3D" font-family="IBM Plex Mono" font-size="8">ENY-2</text>
+      </g>
+      <!-- Enemy 3 (suspected) -->
+      <g transform="translate(890,240)">
+        <polygon points="20,0 40,13 20,26 0,13" fill="none" stroke="#C44D3D" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="20" y="-4" text-anchor="middle" fill="#C44D3D" font-family="IBM Plex Mono" font-size="8">SUSP</text>
+      </g>
+
+      <!-- Objective -->
+      <g transform="translate(1070,160)">
+        <circle cx="22" cy="22" r="26" fill="none" stroke="#D4A24C" stroke-width="1.2" class="blink-soft"/>
+        <line x1="22" y1="-6" x2="22" y2="2" stroke="#D4A24C" stroke-width="1.5"/>
+        <line x1="22" y1="42" x2="22" y2="50" stroke="#D4A24C" stroke-width="1.5"/>
+        <line x1="-6" y1="22" x2="2" y2="22" stroke="#D4A24C" stroke-width="1.5"/>
+        <line x1="42" y1="22" x2="50" y2="22" stroke="#D4A24C" stroke-width="1.5"/>
+        <circle cx="22" cy="22" r="4" fill="#D4A24C"/>
+        <text x="22" y="-12" text-anchor="middle" fill="#D4A24C" font-family="IBM Plex Mono" font-size="10" font-weight="700">OBJ ÁGUILA</text>
+      </g>
+
+      <!-- Direction of attack arrow -->
+      <path d="M380,210 L660,180 L900,170" fill="none" stroke="#D4A24C" stroke-width="1.2" marker-end="url(#arrow)" opacity=".7" stroke-dasharray="8 4"/>
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L8,3 L0,6 Z" fill="#D4A24C"/>
+        </marker>
+      </defs>
+
+      <!-- Coordinates -->
+      <text x="20" y="20" fill="#5c5749" font-family="IBM Plex Mono" font-size="9">▸ N04°15'12"</text>
+      <text x="1090" y="20" fill="#5c5749" font-family="IBM Plex Mono" font-size="9">W73°20'45"</text>
+      <text x="20" y="310" fill="#5c5749" font-family="IBM Plex Mono" font-size="9">▸ AO BOLÍVAR ▸ AOR-CO·02</text>
+      <text x="1080" y="310" fill="#5c5749" font-family="IBM Plex Mono" font-size="9">▸ HOLO·SIM·v1.0</text>
+
+      <!-- Bottom mountain silhouette ambient -->
+      <path d="M0,310 L80,280 L140,295 L210,265 L280,290 L350,270 L420,285 L490,260 L560,280 L630,265 L710,285 L790,270 L870,290 L940,275 L1020,295 L1100,280 L1200,295 L1200,320 L0,320 Z"
+            fill="#D4A24C" opacity=".06"/>
+    </svg>
+
+    <!-- SYMBOLOGY LEGEND -->
+    <div class="symb-strip">
+      <div class="symb-item">
+        <svg class="mil-svg cmd" viewBox="0 0 36 28">
+          <line x1="18" y1="0" x2="18" y2="6" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="1" y="6" width="34" height="20" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <span><b>HQ</b> ▸ COMANDO</span>
+      </div>
+
+      <div class="symb-item">
+        <svg class="mil-svg" viewBox="0 0 36 24">
+          <rect x="1" y="1" width="34" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="1" y1="1" x2="35" y2="23" stroke="currentColor" stroke-width="1.2"/>
+          <line x1="35" y1="1" x2="1" y2="23" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        <span><b>INF</b> ▸ INFANTERÍA</span>
+      </div>
+
+      <div class="symb-item">
+        <svg class="mil-svg" viewBox="0 0 36 24">
+          <rect x="1" y="1" width="34" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <ellipse cx="18" cy="12" rx="13" ry="6" fill="none" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        <span><b>CAB</b> ▸ CABALLERÍA</span>
+      </div>
+
+      <div class="symb-item">
+        <svg class="mil-svg" viewBox="0 0 36 24">
+          <rect x="1" y="1" width="34" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="1" y1="23" x2="35" y2="1" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <span><b>REC</b> ▸ RECONOCIMIENTO</span>
+      </div>
+
+      <div class="symb-item">
+        <svg class="mil-svg" viewBox="0 0 36 24">
+          <rect x="1" y="1" width="34" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="18" cy="12" r="4.5" fill="currentColor"/>
+        </svg>
+        <span><b>ART</b> ▸ ARTILLERÍA</span>
+      </div>
+
+      <div class="symb-item">
+        <svg class="mil-svg" viewBox="0 0 36 24">
+          <rect x="1" y="1" width="34" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M5,12 L18,4 L31,12 L18,20 Z" fill="none" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        <span><b>AVN</b> ▸ AVIACIÓN</span>
+      </div>
+
+      <div class="symb-item">
+        <svg class="mil-svg" viewBox="0 0 36 24">
+          <rect x="1" y="1" width="34" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="11" y1="6" x2="25" y2="18" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="25" y1="6" x2="11" y2="18" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="18" y1="3" x2="18" y2="21" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <span><b>SOF</b> ▸ FUERZAS ESP.</span>
+      </div>
+
+      <div class="symb-item">
+        <svg class="mil-svg eny" viewBox="0 0 36 28">
+          <polygon points="18,2 34,14 18,26 2,14" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <span><b>ENY</b> ▸ FUERZA HOSTIL</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ PHASE 01 ═════════ -->
+  <section class="phase">
+    <div class="num">01<small>FASE</small></div>
+
+    <div class="illust">
+      <svg viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#D4A24C"/><stop offset="1" stop-color="#D4A24C" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- concentric rings = incoming signal -->
+        <circle cx="100" cy="100" r="20" fill="none" stroke="#D4A24C" stroke-width="1" class="draw-line draw-1"/>
+        <circle cx="100" cy="100" r="40" fill="none" stroke="#D4A24C" stroke-width=".7" opacity=".6" class="draw-line draw-2"/>
+        <circle cx="100" cy="100" r="60" fill="none" stroke="#D4A24C" stroke-width=".5" opacity=".4" class="draw-line draw-3"/>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#D4A24C" stroke-width=".4" opacity=".25" class="draw-line draw-3"/>
+        <!-- center node -->
+        <circle cx="100" cy="100" r="3" fill="#D4A24C" class="pulse-dot"/>
+        <!-- decoded data lines -->
+        <line x1="20" y1="180" x2="80" y2="180" stroke="#9a9588" stroke-width=".8" class="draw-line draw-1"/>
+        <line x1="20" y1="172" x2="60" y2="172" stroke="#5c5749" stroke-width=".6" class="draw-line draw-2"/>
+        <line x1="20" y1="164" x2="70" y2="164" stroke="#5c5749" stroke-width=".6" class="draw-line draw-3"/>
+        <text x="20" y="32" fill="#5c5749" font-family="IBM Plex Mono" font-size="7">▸ INCOMING</text>
+        <text x="120" y="32" fill="#D4A24C" font-family="IBM Plex Mono" font-size="7" class="blink-soft">REC ●</text>
+      </svg>
+      <span class="tag">SIG ▸ DECODE</span>
+    </div>
+
+    <div class="body">
+      <div class="doctr">
+        <svg class="phase-mil" viewBox="0 0 30 24"><line x1="15" y1="0" x2="15" y2="4" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="4" width="28" height="18" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8,13 q3,-4 7,0 q3,4 7,0" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+        RECEPCIÓN DE LA MISIÓN <span class="ref">PMTD ▸ 01</span>
+      </div>
+      <h2>¿Qué se nos ordena realmente, y qué se da por entendido?</h2>
+      <p class="doctrine-line">
+        <b>Decodificación de la intención del mando superior.</b> Tareas explícitas, tareas implícitas, hechos, supuestos y restricciones. Sin esta lectura, todo lo que sigue arrastra un error de origen.
+      </p>
+      <div class="duo">
+        <div class="ai">
+          <div class="role">HOLO AI</div>
+          <p>Parsea la orden en segundos. Extrae estructura, identifica vacíos doctrinales, sugiere CCIR candidatas.</p>
+        </div>
+        <div class="ex">
+          <div class="role">EXPERTO MILITAR</div>
+          <p>Lee entre líneas: cultura del comandante superior, contexto del teatro, lo no escrito. La IA no lo sabe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ PHASE 02 ═════════ -->
+  <section class="phase">
+    <div class="num">02<small>FASE</small></div>
+
+    <div class="illust">
+      <svg viewBox="0 0 200 200">
+        <!-- topographic contour lines -->
+        <path d="M10,140 Q50,100 100,120 T190,90" fill="none" stroke="#D4A24C" stroke-width=".8" class="draw-line draw-1"/>
+        <path d="M10,160 Q60,130 110,140 T190,110" fill="none" stroke="#9a9588" stroke-width=".6" class="draw-line draw-2"/>
+        <path d="M10,120 Q50,80 100,100 T190,70" fill="none" stroke="#5c5749" stroke-width=".5" class="draw-line draw-3"/>
+        <path d="M10,100 Q60,60 110,80 T190,50" fill="none" stroke="#5c5749" stroke-width=".4" class="draw-line draw-3"/>
+        <!-- hex grid overlay -->
+        <g stroke="#2a3340" stroke-width=".5" fill="none">
+          <polygon points="40,40 55,32 70,40 70,56 55,64 40,56"/>
+          <polygon points="70,40 85,32 100,40 100,56 85,64 70,56"/>
+          <polygon points="100,40 115,32 130,40 130,56 115,64 100,56"/>
+          <polygon points="55,64 70,56 85,64 85,80 70,88 55,80"/>
+          <polygon points="85,64 100,56 115,64 115,80 100,88 85,80"/>
+        </g>
+        <!-- focal hexagon (active) -->
+        <polygon points="85,64 100,56 115,64 115,80 100,88 85,80" fill="none" stroke="#D4A24C" stroke-width="1.2"/>
+        <circle cx="100" cy="72" r="2.5" fill="#D4A24C" class="pulse-dot"/>
+        <!-- crosshair reticle -->
+        <line x1="100" y1="55" x2="100" y2="50" stroke="#D4A24C" stroke-width="1"/>
+        <line x1="100" y1="89" x2="100" y2="94" stroke="#D4A24C" stroke-width="1"/>
+        <line x1="83" y1="72" x2="78" y2="72" stroke="#D4A24C" stroke-width="1"/>
+        <line x1="117" y1="72" x2="122" y2="72" stroke="#D4A24C" stroke-width="1"/>
+        <text x="20" y="32" fill="#5c5749" font-family="IBM Plex Mono" font-size="7">▸ JIPOE</text>
+        <text x="135" y="32" fill="#D4A24C" font-family="IBM Plex Mono" font-size="7">04°N 73°W</text>
+      </svg>
+      <span class="tag">TER ▸ ANALYSIS</span>
+    </div>
+
+    <div class="body">
+      <div class="doctr">
+        <svg class="phase-mil" viewBox="0 0 30 24"><rect x="1" y="1" width="28" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="23" x2="29" y2="1" stroke="currentColor" stroke-width="1.5"/></svg>
+        ANÁLISIS DEL ENTORNO OPERACIONAL <span class="ref">PMTD ▸ 02 ▸ JIPOE</span>
+      </div>
+      <h2>¿Dónde estamos parados, y quién más respira el mismo aire?</h2>
+      <p class="doctrine-line">
+        <b>JIPOE / PEMSITIM.</b> Terreno, clima, adversario, población civil, infraestructura, tiempo. El campo de batalla nunca es neutral: leerlo bien es ya media decisión.
+      </p>
+      <div class="duo">
+        <div class="ai">
+          <div class="role">HOLO AI</div>
+          <p>Fusiona ISR multifuente (HUMINT · SIGINT · IMINT · OSINT). Mapea terreno, patrones de vida, COG candidatos.</p>
+        </div>
+        <div class="ex">
+          <div class="role">EXPERTO MILITAR</div>
+          <p>Lee la geometría del adversario. Distingue lo medible de lo significativo. Aporta el "olfato del terreno".</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ PHASE 03 ═════════ -->
+  <section class="phase">
+    <div class="num">03<small>FASE</small></div>
+
+    <div class="illust">
+      <svg viewBox="0 0 200 200">
+        <!-- branching decision tree -->
+        <line x1="100" y1="40" x2="100" y2="80" stroke="#D4A24C" stroke-width="1" class="draw-line draw-1"/>
+        <line x1="100" y1="80" x2="50" y2="120" stroke="#D4A24C" stroke-width=".8" class="draw-line draw-2"/>
+        <line x1="100" y1="80" x2="100" y2="120" stroke="#D4A24C" stroke-width=".8" class="draw-line draw-2"/>
+        <line x1="100" y1="80" x2="150" y2="120" stroke="#D4A24C" stroke-width=".8" class="draw-line draw-2"/>
+        <line x1="50" y1="120" x2="30" y2="160" stroke="#9a9588" stroke-width=".6" class="draw-line draw-3"/>
+        <line x1="50" y1="120" x2="70" y2="160" stroke="#9a9588" stroke-width=".6" class="draw-line draw-3"/>
+        <line x1="100" y1="120" x2="100" y2="160" stroke="#D4A24C" stroke-width=".7" class="draw-line draw-3"/>
+        <line x1="150" y1="120" x2="130" y2="160" stroke="#9a9588" stroke-width=".6" class="draw-line draw-3"/>
+        <line x1="150" y1="120" x2="170" y2="160" stroke="#9a9588" stroke-width=".6" class="draw-line draw-3"/>
+        <!-- nodes -->
+        <circle cx="100" cy="40" r="4" fill="#D4A24C" class="pulse-dot"/>
+        <circle cx="100" cy="80" r="3" fill="#D4A24C"/>
+        <circle cx="50" cy="120" r="2.5" fill="#9a9588"/>
+        <circle cx="100" cy="120" r="3" fill="#D4A24C"/>
+        <circle cx="150" cy="120" r="2.5" fill="#9a9588"/>
+        <circle cx="30" cy="160" r="2" fill="#5c5749"/>
+        <circle cx="70" cy="160" r="2" fill="#5c5749"/>
+        <circle cx="100" cy="160" r="3" fill="#D4A24C" stroke="#D4A24C" stroke-width="1.5"/>
+        <circle cx="130" cy="160" r="2" fill="#5c5749"/>
+        <circle cx="170" cy="160" r="2" fill="#5c5749"/>
+        <text x="20" y="32" fill="#5c5749" font-family="IBM Plex Mono" font-size="7">▸ COA-TREE</text>
+        <text x="140" y="32" fill="#D4A24C" font-family="IBM Plex Mono" font-size="7">N=07</text>
+        <text x="92" y="180" fill="#D4A24C" font-family="IBM Plex Mono" font-size="7">★ COA·3</text>
+      </svg>
+      <span class="tag">OPT ▸ GENERATE</span>
+    </div>
+
+    <div class="body">
+      <div class="doctr">
+        <svg class="phase-mil" viewBox="0 0 30 24"><rect x="1" y="1" width="28" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="1" y1="1" x2="29" y2="23" stroke="currentColor" stroke-width="1.2"/><line x1="29" y1="1" x2="1" y2="23" stroke="currentColor" stroke-width="1.2"/></svg>
+        DESARROLLO DE CURSOS DE ACCIÓN <span class="ref">PMTD ▸ 03 ▸ COA</span>
+      </div>
+      <h2>¿Cuántas formas hay de cumplir, y cuál nos deja con más opciones?</h2>
+      <p class="doctrine-line">
+        <b>Espacio de soluciones factibles.</b> Una sola opción no es planeamiento, es resignación. La buena decisión preserva libertad de acción para el comandante.
+      </p>
+      <div class="duo">
+        <div class="ai">
+          <div class="role">HOLO AI</div>
+          <p>Genera múltiples COA bajo restricciones (tiempo, recursos, terreno, ROE). Explora lo que el staff no alcanzaría.</p>
+        </div>
+        <div class="ex">
+          <div class="role">EXPERTO MILITAR</div>
+          <p>Descarta lo doctrinalmente válido pero operacionalmente absurdo. Aporta el "esto en el terreno no funciona".</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ PHASE 04 ═════════ -->
+  <section class="phase">
+    <div class="num">04<small>FASE</small></div>
+
+    <div class="illust">
+      <svg viewBox="0 0 200 200">
+        <!-- probability cone (wargame outcomes) -->
+        <defs>
+          <linearGradient id="cone" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#D4A24C" stop-opacity=".4"/>
+            <stop offset="1" stop-color="#D4A24C" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polygon points="100,40 30,170 170,170" fill="url(#cone)" opacity=".5"/>
+        <line x1="100" y1="40" x2="30" y2="170" stroke="#D4A24C" stroke-width=".8" class="draw-line draw-1"/>
+        <line x1="100" y1="40" x2="60" y2="170" stroke="#9a9588" stroke-width=".5" opacity=".5" class="draw-line draw-2"/>
+        <line x1="100" y1="40" x2="100" y2="170" stroke="#D4A24C" stroke-width="1.2" class="draw-line draw-1"/>
+        <line x1="100" y1="40" x2="140" y2="170" stroke="#9a9588" stroke-width=".5" opacity=".5" class="draw-line draw-2"/>
+        <line x1="100" y1="40" x2="170" y2="170" stroke="#D4A24C" stroke-width=".8" class="draw-line draw-3"/>
+        <!-- iteration markers -->
+        <circle cx="100" cy="40" r="4" fill="#D4A24C" class="pulse-dot"/>
+        <circle cx="100" cy="100" r="2" fill="#D4A24C"/>
+        <circle cx="100" cy="150" r="3" fill="#D4A24C" stroke="#D4A24C" stroke-width="1.2" class="blink-soft"/>
+        <!-- grid -->
+        <g stroke="#2a3340" stroke-width=".4">
+          <line x1="0" y1="60" x2="200" y2="60"/>
+          <line x1="0" y1="100" x2="200" y2="100"/>
+          <line x1="0" y1="140" x2="200" y2="140"/>
+        </g>
+        <text x="20" y="32" fill="#5c5749" font-family="IBM Plex Mono" font-size="7">▸ WARGAME</text>
+        <text x="125" y="32" fill="#D4A24C" font-family="IBM Plex Mono" font-size="7">SIM 12,400×</text>
+        <text x="105" y="155" fill="#D4A24C" font-family="IBM Plex Mono" font-size="7">P=0.78</text>
+      </svg>
+      <span class="tag">RISK ▸ MODEL</span>
+    </div>
+
+    <div class="body">
+      <div class="doctr">
+        <svg class="phase-mil" viewBox="0 0 30 24"><rect x="1" y="1" width="28" height="22" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="15" cy="12" r="4.5" fill="currentColor"/></svg>
+        JUEGO DE GUERRA · COMPARACIÓN <span class="ref">PMTD ▸ 04-05</span>
+      </div>
+      <h2>¿Qué pasa si me equivoco, y cuán reversible es el daño?</h2>
+      <p class="doctrine-line">
+        <b>Wargaming acción–reacción–contraacción.</b> Una decisión sin escenario adverso no es plan, es deseo. Mecanismos de derrota propios y enemigos puestos en evidencia.
+      </p>
+      <div class="duo">
+        <div class="ai">
+          <div class="role">HOLO AI</div>
+          <p>Simula miles de iteraciones contra COA enemigos probables y peligrosos. Calcula matriz multicriterio explicable.</p>
+        </div>
+        <div class="ex">
+          <div class="role">EXPERTO MILITAR</div>
+          <p>Inyecta hipótesis sobre la voluntad de combate del adversario. Pondera lo inaceptable según el comandante.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ PHASE 05 ═════════ -->
+  <section class="phase">
+    <div class="num">05<small>FASE</small></div>
+
+    <div class="illust">
+      <svg viewBox="0 0 200 200">
+        <!-- authority seal -->
+        <circle cx="100" cy="100" r="60" fill="none" stroke="#D4A24C" stroke-width="1" class="spin-slow"/>
+        <circle cx="100" cy="100" r="48" fill="none" stroke="#9a9588" stroke-width=".5" stroke-dasharray="2 4" class="spin-rev"/>
+        <g class="spin-slow">
+          <line x1="100" y1="40" x2="100" y2="48" stroke="#D4A24C" stroke-width="1.2"/>
+          <line x1="100" y1="152" x2="100" y2="160" stroke="#D4A24C" stroke-width="1.2"/>
+          <line x1="40" y1="100" x2="48" y2="100" stroke="#D4A24C" stroke-width="1.2"/>
+          <line x1="152" y1="100" x2="160" y2="100" stroke="#D4A24C" stroke-width="1.2"/>
+        </g>
+        <!-- inner star (5 points = command authority) -->
+        <polygon points="100,72 108,92 130,92 112,104 120,124 100,112 80,124 88,104 70,92 92,92"
+                 fill="none" stroke="#D4A24C" stroke-width="1.2" class="draw-line draw-2"/>
+        <circle cx="100" cy="100" r="3" fill="#D4A24C" class="pulse-dot"/>
+        <text x="20" y="32" fill="#5c5749" font-family="IBM Plex Mono" font-size="7">▸ AUTHORITY</text>
+        <text x="135" y="32" fill="#D4A24C" font-family="IBM Plex Mono" font-size="7" class="blink-soft">SIGN ●</text>
+      </svg>
+      <span class="tag">CMD ▸ DECIDE</span>
+    </div>
+
+    <div class="body">
+      <div class="doctr">
+        <svg class="phase-mil" viewBox="0 0 30 28"><line x1="15" y1="0" x2="15" y2="6" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="6" width="28" height="20" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="11" y1="11" x2="19" y2="21" stroke="currentColor" stroke-width="1.2"/><line x1="19" y1="11" x2="11" y2="21" stroke="currentColor" stroke-width="1.2"/><line x1="15" y1="9" x2="15" y2="23" stroke="currentColor" stroke-width="1.2"/></svg>
+        APROBACIÓN DEL COA · OPORD <span class="ref">PMTD ▸ 06-07</span>
+      </div>
+      <h2>¿Quién firma esta decisión, y qué asume al firmarla?</h2>
+      <p class="doctrine-line">
+        <b>Autoridad de mando.</b> La firma del comandante no es trámite: es el momento en que la responsabilidad deja de ser distribuida y se vuelve personal. La IA puede recomendar; sólo el ser humano puede asumir.
+      </p>
+      <div class="duo">
+        <div class="ai">
+          <div class="role">HOLO AI</div>
+          <p>Presenta opciones con evidencia, simulaciones y trazabilidad. Genera la OPORD con sus cinco párrafos y anexos.</p>
+        </div>
+        <div class="ex">
+          <div class="role">COMANDANTE</div>
+          <p>Decide. Firma. Asume las consecuencias. La autoridad no se delega en algoritmos. Nunca.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ DECISION BLOCK ═════════ -->
+  <section class="decision">
+
+    <!-- ambient: UH-60 Blackhawk top-left -->
+    <svg class="ambient-silhouette amb-uh60" viewBox="0 0 200 80">
+      <path d="M30,40 Q40,25 90,28 L150,30 L160,40 L160,55 L100,58 Q50,55 30,50 Z" fill="currentColor"/>
+      <path d="M30,40 Q35,32 50,32 L60,38 L30,42 Z" fill="currentColor" opacity=".5"/>
+      <rect x="160" y="40" width="35" height="6" fill="currentColor"/>
+      <circle cx="195" cy="40" r="3" fill="currentColor"/>
+      <path d="M180,40 L195,30 L195,38 L185,42 Z" fill="currentColor"/>
+      <line x1="80" y1="28" x2="80" y2="22" stroke="currentColor" stroke-width="3"/>
+      <rect x="20" y="18" width="120" height="2" fill="currentColor" opacity=".5"/>
+      <line x1="50" y1="65" x2="120" y2="65" stroke="currentColor" stroke-width="2"/>
+      <line x1="60" y1="58" x2="60" y2="65" stroke="currentColor" stroke-width="1.5"/>
+      <line x1="110" y1="58" x2="110" y2="65" stroke="currentColor" stroke-width="1.5"/>
+    </svg>
+
+    <!-- ambient: A-29 Super Tucano (COFAC) bottom-right -->
+    <svg class="ambient-silhouette amb-a29" viewBox="0 0 280 100">
+      <ellipse cx="140" cy="50" rx="115" ry="7" fill="currentColor"/>
+      <path d="M30,42 L140,36 L240,42 L240,58 L140,64 L30,58 Z" fill="currentColor"/>
+      <ellipse cx="80" cy="50" rx="22" ry="5" fill="currentColor" opacity=".6"/>
+      <path d="M250,38 L272,50 L250,62 Z" fill="currentColor"/>
+      <path d="M240,46 L260,34 L264,46 L260,52 Z" fill="currentColor"/>
+      <line x1="20" y1="40" x2="20" y2="60" stroke="currentColor" stroke-width="3"/>
+      <circle cx="20" cy="50" r="2" fill="currentColor"/>
+    </svg>
+
+<!-- ambient: mountain silhouette across bottom -->
+    <svg class="amb-mountain" viewBox="0 0 1200 80" preserveAspectRatio="none">
+      <path d="M0,80 L60,50 L120,65 L180,38 L260,55 L340,28 L420,50 L500,22 L580,45 L660,35 L740,55 L820,40 L900,60 L980,45 L1060,55 L1140,50 L1200,58 L1200,80 Z" fill="currentColor"/>
+    </svg>
+
+    <div style="position:relative;z-index:2">
+      <div class="label">★ PRINCIPIO OPERATIVO ★</div>
+      <h3>
+        La inteligencia artificial <b>acelera</b> el análisis.<br>
+        El experto militar <b>interpreta</b> el contexto.<br>
+        El comandante <b>asume</b> el mando.
+      </h3>
+      <div class="auth">
+        <span>HOLO AI <span class="arrow">▸</span> COPILOTO</span>
+        <span>EXPERTO <span class="arrow">▸</span> JUICIO</span>
+        <span>COMANDANTE <span class="arrow">▸</span> AUTORIDAD</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ FOOTER ═════════ -->
+  <div class="foot">
+    <span>HOLO ▸ <b>SOBERANÍA TECNOLÓGICA</b></span>
+    <div class="ticker">
+      <div class="ticker-track" id="ticker">
+        <span>▸ DOCTRINE LAYER ACTIVE</span>
+        <span>▸ MFRE 1-02.1 LOADED</span>
+        <span>▸ JIPOE MODULE ▸ READY</span>
+        <span>▸ COA ENGINE ▸ READY</span>
+        <span>▸ WARGAME SIM ▸ READY</span>
+        <span>▸ OPORD GENERATOR ▸ READY</span>
+        <span>▸ HUMAN-IN-COMMAND ▸ ENFORCED</span>
+        <span>▸ DOCTRINE LAYER ACTIVE</span>
+        <span>▸ MFRE 1-02.1 LOADED</span>
+        <span>▸ JIPOE MODULE ▸ READY</span>
+        <span>▸ COA ENGINE ▸ READY</span>
+        <span>▸ WARGAME SIM ▸ READY</span>
+        <span>▸ OPORD GENERATOR ▸ READY</span>
+        <span>▸ HUMAN-IN-COMMAND ▸ ENFORCED</span>
+      </div>
+    </div>
+    <span>v1.0 // <b>FFMM·CO</b> // 2026</span>
+  </div>
+
+</div>
+
+<script>
+  // Live timestamp
+  function pad(n){return String(n).padStart(2,'0')}
+  function tick(){
+    const d = new Date();
+    document.getElementById('ts').textContent =
+      `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ▸ ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} UTC${d.getTimezoneOffset()<=0?'+':''}${-d.getTimezoneOffset()/60}`;
+  }
+  tick(); setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
